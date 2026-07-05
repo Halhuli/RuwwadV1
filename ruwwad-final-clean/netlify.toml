@@ -1,0 +1,58 @@
+# ══════════════════════════════════════
+# Netlify Configuration — رواد التنمية
+# ══════════════════════════════════════
+
+[build]
+  publish = "."
+
+# ── Force HTTPS على كل الطلبات ────────
+[[redirects]]
+  from    = "http://*"
+  to      = "https://:splat"
+  status  = 301
+  force   = true
+
+# ── Security Headers ──────────────────
+[[headers]]
+  for = "/*"
+  [headers.values]
+
+    # 🔒 HSTS — يجبر المتصفح يستخدم HTTPS دائماً لمدة سنة
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+
+    # 🚫 منع تحميل الصفحة في iframe (Clickjacking)
+    X-Frame-Options = "DENY"
+
+    # 🚫 منع المتصفح يخمّن نوع الملف
+    X-Content-Type-Options = "nosniff"
+
+    # 🔒 تحكم في معلومات Referrer
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+    # 🛡️ منع XSS في المتصفحات القديمة
+    X-XSS-Protection = "1; mode=block"
+
+    # 🔒 Content Security Policy — يحدد بالضبط وين يقدر الكود يتحمل من
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://cdn.jsdelivr.net https://fonts.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.gstatic.com; font-src 'self' https://fonts.gstatic.com; connect-src 'self' https://*.supabase.co wss://*.supabase.co; img-src 'self' data: blob:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'; upgrade-insecure-requests"
+
+    # 🔒 Permissions Policy — تعطيل الميزات الخطيرة
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=(), bluetooth=(), accelerometer=(), gyroscope=()"
+
+    # 🔒 منع المتصفح يحفظ البيانات الحساسة في Cache
+    Cache-Control = "no-store, no-cache, must-revalidate, proxy-revalidate"
+
+# ── Static Assets تقدر تتكش ──────────
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, immutable"
+
+[[headers]]
+  for = "/*.js"
+  [headers.values]
+    Cache-Control = "public, max-age=604800, immutable"
+
+[[headers]]
+  for = "/*.png"
+  [headers.values]
+    Cache-Control = "public, max-age=2592000, immutable"
